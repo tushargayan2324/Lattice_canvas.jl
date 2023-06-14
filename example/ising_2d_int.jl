@@ -134,17 +134,28 @@ end
         notify(data)
     end
 
-    stop_butn = 1
+    stop_butn = Observable(1)
 
     button2 = buttongrid[1,2] = Button(f, label="stop")
 
     on(button2.clicks) do click2
-        #data[] .= rand((-1,1), 30, 30)
-        #data[][1,1] = false
-        #notify(data)
-        stop_butn = (stop_butn + 1)%2
-        #stop_butn = stop_butn%2
+        stop_butn[] = (stop_butn[] + 1)%2
+        print(stop_butn[])
+        notify(stop_butn)
     end
+
+    # button3 = buttongrid[1,3] = Button(f, label="start")
+
+    # on(button3.clicks) do click3
+    #     #something
+    #     stop_butn[] = 1
+    #     notify(stop_butn)
+    #     println("true")
+    #     while_run()
+    #     println("end")
+    # end
+
+
 
 
     #Lat = rand((-1,1),(len_lat,len_lat))
@@ -181,22 +192,36 @@ end
     hideydecorations!(ax, ticks = false)
 
 
-    # while Bool(stop_butn)==true
+#    stop_butn[]
+
+    # while Bool(stop_butn[])==true
     #     data[] = monte_new(data[],temp)
     #     magn_cal += magnetization(data[])
     #     erg_cal += energy(data[])
     #     notify(data) 
-    #     sleep(0.01)       
+    #     sleep(0.05)       
     # end
 
-    for i=1:(5*(10^2))
-        #Lat = monte_new(Lat,(3+1/i))
+function while_run()
+    while Bool(stop_butn[])==true
         data[] = monte_new(data[],temp)
-        magn_cal += magnetization(data[])
-        erg_cal += energy(data[])
-        notify(data)
-        sleep(0.02)
+        #magn_cal += magnetization(data[])
+        #erg_cal += energy(data[])
+        notify(data) 
+        sleep(0.05)       
     end
+end
+
+while_run()
+
+    # for i=1:(5*(10^2))
+    #     #Lat = monte_new(Lat,(3+1/i))
+    #     data[] = monte_new(data[],temp)
+    #     magn_cal += magnetization(data[])
+    #     erg_cal += energy(data[])
+    #     notify(data)
+    #     sleep(0.02)
+    # end
 
 
 
