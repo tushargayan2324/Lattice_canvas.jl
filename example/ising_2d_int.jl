@@ -155,6 +155,12 @@ end
     #     println("end")
     # end
 
+    sg = SliderGrid(f[3, 1],
+    (label = "temprature", range = 0.000001:0.1:3.5, format = "{:.1f}K", startvalue = 2),
+    )
+
+    temperature_ = sg.sliders[1].value
+
 
 
 
@@ -225,18 +231,7 @@ function for_run()
 end
 
 
-sg = SliderGrid(f[3, 1],
-#    (label = "Amplitude", range = 0:0.1:10, startvalue = 5),
-    (label = "temprature", range = 0.000001:0.1:3.5, format = "{:.1f}K", startvalue = 2),
-#    (label = "Phase", range = 0:0.01:2pi,
-#        format = x -> string(round(x/pi, digits = 2), "π"))
-)
 
-temperature_ = sg.sliders[1].value
-
-on(sg.sliders[1].value) do val
-    ## do something with `val`
-end
 
 
 
