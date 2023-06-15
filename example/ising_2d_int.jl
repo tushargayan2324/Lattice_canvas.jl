@@ -69,37 +69,37 @@ function monte_new(M, temp)
     return M
 end
 
-function main_new()
-    Pts = 65
+# function main_new()
+#     Pts = 65
 
-    temp_arr = LinRange(1,3,Pts)
+#     temp_arr = LinRange(1,3,Pts)
     
-    Erg_array = zeros(Pts,1) #LinRange(0.001,5,Pts)
-    Mag_array = zeros(Pts,1) #LinRange(0.001,5,Pts)
+#     Erg_array = zeros(Pts,1) #LinRange(0.001,5,Pts)
+#     Mag_array = zeros(Pts,1) #LinRange(0.001,5,Pts)
     
-    len_lat = 200
-    Lat = rand((-1,1),(len_lat,len_lat))
+#     len_lat = 200
+#     Lat = rand((-1,1),(len_lat,len_lat))
             
-    for i=1:(10^4)
-        Lat = monte_new(Lat,(3+1/i))
-    end
+#     for i=1:(10^4)
+#         Lat = monte_new(Lat,(3+1/i))
+#     end
  
-    for i=1:Pts #annealing
-        magn_cal = 0
-        erg_cal = 0
+#     for i=1:Pts #annealing
+#         magn_cal = 0
+#         erg_cal = 0
 
-        for j=1:10^3 #ensemble average for a given temprature
-            Lat = monte(Lat,temp_array[Pts-i+1])
-            magn_cal+=magnetization(Lat)
-            erg_cal+=energy(Lat)
-        end
-        Mag_array[i] = magn_cal/((10^3)*len_lat^2)
-        Erg_array[i] = erg_cal/((10^3)*len_lat^2)
-    end
+#         for j=1:10^3 #ensemble average for a given temprature
+#             Lat = monte(Lat,temp_array[Pts-i+1])
+#             magn_cal+=magnetization(Lat)
+#             erg_cal+=energy(Lat)
+#         end
+#         Mag_array[i] = magn_cal/((10^3)*len_lat^2)
+#         Erg_array[i] = erg_cal/((10^3)*len_lat^2)
+#     end
 
     
-    return reverse(Mag_array), reverse(Erg_array)
-end
+#     return reverse(Mag_array), reverse(Erg_array)
+# end
 
 ###########################################################
 
@@ -112,12 +112,11 @@ end
     
     # Erg_array = zeros(Pts,1) #LinRange(0.001,5,Pts)
     # Mag_array = zeros(Pts,1) #LinRange(0.001,5,Pts)
-
     using GLMakie
 
     GLMakie.activate!(inline=false)
 
-    len_lat = 75
+    len_lat = 100
 
     data = Observable(rand((-1,1), len_lat, len_lat))
 
@@ -148,10 +147,11 @@ end
 
     # on(button3.clicks) do click3
     #     #something
-    #     stop_butn[] = 1
-    #     notify(stop_butn)
+    #     #stop_butn[] = 1
+    #     #notify(stop_butn)
     #     println("true")
-    #     while_run()
+    #     #while_run()
+    #     for_run()
     #     println("end")
     # end
 
@@ -169,7 +169,7 @@ end
         elseif event.type in (MouseEventTypes.leftclick, MouseEventTypes.leftdrag)
             index = round.(Int, event.data)
             #print(index)
-            if typeof(index[1]) != Int 
+            if typeof(index[1]) != Int #|| index .< size(data[]) || index .> 0
                 return
             end
             index in interacted_with && return
@@ -183,7 +183,7 @@ end
     magn_cal = 0
     erg_cal = 0
 
-    temp = 0.5
+    temp = 2.2
 
     deactivate_interaction!(ax, :rectanglezoom,)
 
@@ -204,6 +204,18 @@ end
 
 function while_run()
     while Bool(stop_butn[])==true
+        data[] = monte_new(data[],temperature_[])
+        #magn_cal += magnetization(data[])
+        #erg_cal += energy(data[])
+        notify(data) 
+        sleep(0.01)       
+    end
+end
+
+while_run()
+
+function for_run()
+    for i=1:10^3
         data[] = monte_new(data[],temp)
         #magn_cal += magnetization(data[])
         #erg_cal += energy(data[])
@@ -212,7 +224,21 @@ function while_run()
     end
 end
 
-while_run()
+
+sg = SliderGrid(f[3, 1],
+#    (label = "Amplitude", range = 0:0.1:10, startvalue = 5),
+    (label = "temprature", range = 0.000001:0.1:3.5, format = "{:.1f}K", startvalue = 2),
+#    (label = "Phase", range = 0:0.01:2pi,
+#        format = x -> string(round(x/pi, digits = 2), "π"))
+)
+
+temperature_ = sg.sliders[1].value
+
+on(sg.sliders[1].value) do val
+    ## do something with `val`
+end
+
+
 
     # for i=1:(5*(10^2))
     #     #Lat = monte_new(Lat,(3+1/i))
